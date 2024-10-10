@@ -1,0 +1,121 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Intro to layers | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.30/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+        
+        #capas {
+            top: 20px;
+            right: 20px;
+            position: absolute;
+            z-index: 99;
+            background-color: white;
+            border-radius: 8px;
+            padding: 10px;
+            opacity: 0.85;
+            gap: 10px;
+        }
+    </style>
+
+    <script>
+        require(["esri/config", "esri/Map", "esri/views/MapView", "esri/layers/TileLayer", "esri/layers/WMSLayer"], (esriConfig, Map, MapView, TileLayer, WMSLayer) => {
+
+            esriConfig.apiKey = "AAPK5165e75409da423ba0a4601951b9950aVDW4BE9YU4C81lQg6k1xo17MlKQrS5g0gnth7P6irbkJeu7HQHdjuZ3o-8J2p3le";
+            //servicio carreteras
+            const transportationLayer = new TileLayer({
+                url: "https://server.arcgisonline.com/arcgis/rest/services/Reference/World_Transportation/MapServer",
+                id: "streets",
+                visible: false
+            });
+
+            //servicio viento
+            const wmsLayerWind = new WMSLayer({
+                url: "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&WIDTH=600&HEIGHT=301&LAYERS=GDPS.ETA_UU&FORMAT=image/png",
+                visible: false,
+                opacity: 0.25
+            });
+
+            //servico temperatura
+            const wmsLayerWeather = new WMSLayer({
+                url: "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&WIDTH=600&HEIGHT=301&LAYERS=GDPS.ETA_TT&FORMAT=image/png",
+                visible: false,
+                opacity: 0.25
+            });
+
+            //servico imagenes satelitales
+            const wmsLayersatelliteImages = new WMSLayer({
+                //url: "https://ows.terrestris.de/osm/service", //Mapas vectoriales y raster de OpenStreetMap
+                //url: "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RDPA.24F_PR&STYLES=RDPA-WXO&CRS=EPSG:4326&WIDTH=600&HEIGHT=400&FORMAT=image/png", //capa de presipitacion                visible: false,
+                url: "https://geosinav30.conagua.gob.mx:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=Sina:m18_ciclonestropicales&CRS=EPSG:6362&WIDTH=800&HEIGHT=600&FORMAT=image/png&STYLES=point",
+                opacity: 0.25
+            });
+
+
+
+            const map = new Map({
+                basemap: "arcgis-imagery",
+                ground: "world-elevation",
+                layers: [transportationLayer, wmsLayerWind, wmsLayerWeather, wmsLayersatelliteImages],
+
+            });
+
+            map.add(transportationLayer, wmsLayerWind, wmsLayerWeather, wmsLayersatelliteImages);
+
+            const view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [-102.390761, 23.705672],
+                zoom: 5.5
+            });
+
+
+            const streetsLayerToggle = document.getElementById("streetsLayer");
+            streetsLayerToggle.addEventListener("change", () => {
+                transportationLayer.visible = streetsLayerToggle.checked;
+            });
+
+            const windLayer = document.getElementById("windLayer");
+            windLayer.addEventListener("change", () => {
+                wmsLayerWind.visible = windLayer.checked;
+            });
+
+            const weatherLayer = document.getElementById("weatherLayer");
+            weatherLayer.addEventListener("change", () => {
+                wmsLayerWeather.visible = weatherLayer.checked;
+            });
+
+            const satelliteImagesLayer = document.getElementById("satelliteImagesLayer");
+            satelliteImagesLayer.addEventListener("change", () => {
+                wmsLayersatelliteImages.visible = satelliteImagesLayer.checked;
+            });
+
+
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+    <div id="capas">
+        <span class="esri-widget"> <input type="checkbox" id="streetsLayer" /> Transportation </span>
+        <span class="esri-widget"> <input type="checkbox" id="windLayer" /> Viento </span>
+        <span class="esri-widget"> <input type="checkbox" id="weatherLayer" /> Temperatura </span>
+        <span class="esri-widget"> <input type="checkbox" id="satelliteImagesLayer" /> Precipitacion</span>
+    </div>
+</body>
+
+</html>
