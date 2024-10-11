@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aerosol Optical Thickness Map</title>
+
+    <!-- Incluir las bibliotecas de ArcGIS JavaScript API -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.27/"></script>
+
+    <style>
+        /* Estilos para ajustar la visualización */
+        
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Div para visualizar el mapa -->
+    <div id="viewDiv"></div>
+
+    <!-- Script para crear el mapa -->
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/WMSLayer",
+            "esri/widgets/Legend"
+        ], function(Map, MapView, WMSLayer, Legend) {
+
+            // Crear el WMSLayer con la capa "MODAL2_D_AER_OD"
+            const wmsLayer = new WMSLayer({
+                //url: "https://neo.gsfc.nasa.gov/wms/wms?service=WMS&request=GetMap&layers=MODAL2_D_AER_OD&styles=&format=image/png&bbox=-180,-90,180,90&width=256&height=256&srs=EPSG:4326",
+                url: "https://neo.gsfc.nasa.gov/wms/wms?SERVICE=WMS&REQUEST=GetMap&LAYERS=MODAL2_D_AER_OD&STYLES=rgb&FORMAT=image/png&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256",
+                visible: "true"
+            });
+
+            // Evento para capturar errores en la carga del WMSLayer
+            wmsLayer.when(function() {
+                console.log("WMS Layer loaded successfully.");
+            }).catch(function(error) {
+                console.error("Error loading WMS Layer: ", error);
+            });
+
+            // Crear el mapa con la capa WMS
+            const map = new Map({
+                basemap: "topo-vector", // Puedes cambiar el basemap si lo deseas
+                layers: [wmsLayer]
+            });
+
+            // Crear la vista del mapa
+            const view = new MapView({
+                container: "viewDiv", // Div donde se visualizará el mapa
+                map: map,
+                center: [-95, 39], // Centro del mapa (puedes ajustar la ubicación)
+                zoom: 4 // Nivel de zoom inicial
+            });
+
+            // Capturar cualquier error al crear la vista de la capa
+            view.on("layerview-create-error", function(event) {
+                console.error("Layer view failed to create: ", event);
+            });
+
+            // Crear y agregar el widget de leyenda
+            const legend = new Legend({
+                view: view,
+                layerInfos: [{
+                    layer: wmsLayer,
+                    title: "Aerosol Optical Thickness (MODIS/Terra)"
+                }]
+            });
+            view.ui.add(legend, "bottom-right"); // Posición de la leyenda en el mapa
+        });
+    </script>
+
+</body>
+
+</html>

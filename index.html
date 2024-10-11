@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Intro to layers | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+    <title>Servicios WMS</title>
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
     <script src="https://js.arcgis.com/4.30/"></script>
@@ -32,7 +32,7 @@
     </style>
 
     <script>
-        require(["esri/config", "esri/Map", "esri/views/MapView", "esri/layers/TileLayer", "esri/layers/WMSLayer"], (esriConfig, Map, MapView, TileLayer, WMSLayer) => {
+        require(["esri/config", "esri/Map", "esri/views/MapView", "esri/layers/TileLayer", "esri/layers/WMSLayer", "esri/layers/WFSLayer", "esri/layers/WMSLayer"], (esriConfig, Map, MapView, TileLayer, WMSLayer, WFSLayer, Legend) => {
 
             esriConfig.apiKey = "AAPK5165e75409da423ba0a4601951b9950aVDW4BE9YU4C81lQg6k1xo17MlKQrS5g0gnth7P6irbkJeu7HQHdjuZ3o-8J2p3le";
             //servicio carreteras
@@ -59,11 +59,20 @@
             //servico imagenes satelitales
             const wmsLayersatelliteImages = new WMSLayer({
                 //url: "https://ows.terrestris.de/osm/service", //Mapas vectoriales y raster de OpenStreetMap
-                //url: "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RDPA.24F_PR&STYLES=RDPA-WXO&CRS=EPSG:4326&WIDTH=600&HEIGHT=400&FORMAT=image/png", //capa de presipitacion                visible: false,
-                url: "https://geosinav30.conagua.gob.mx:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=Sina:m18_ciclonestropicales&CRS=EPSG:6362&WIDTH=800&HEIGHT=600&FORMAT=image/png&STYLES=point",
+                //url: "https://geo.weather.gc.ca/geomet?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=RDPA.24F_PR&STYLES=RDPA-WXO&CRS=EPSG:4326&WIDTH=600&HEIGHT=400&FORMAT=image/png", //capa de presipitacion 
+                //url: "https://geosinav30.conagua.gob.mx:8080/geoserver/Sina/m00_riosprincipales/wms?Version=1.1.0", //capa de rios
+                //url: "https://neo.gsfc.nasa.gov/wms/wms?SERVICE=WMS&REQUEST=GetMap&LAYERS=MODAL2_D_AER_OD&STYLES=rgb&FORMAT=image/png&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256",
+                url: "http://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_trafico_maritimo?",
+                visible: false,
                 opacity: 0.25
             });
 
+            // const wfsLayer = new WFSLayer({
+            //     url: "https://geosinav30.conagua.gob.mx:8080/geoserver/Sina/m00_riosprincipales/wfs",
+            //     version: "1.1.0", // Especificar la versión del WFS
+            //     name: "Sina:m00_riosprincipales", // Nombre del servicio
+            //     visible: false,
+            // });
 
 
             const map = new Map({
